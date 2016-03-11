@@ -8,7 +8,6 @@ theta = math.pi/4
 speed = 0.5
 sensor_cone_width = math.pi/4
 sensor_angles = [math.pi/3, math.pi/6, 0, -math.pi/6, -math.pi/3]
-#~ sensor_angles = [math.pi/6, -math.pi/6]
 
 number_of_obstacles = 10
 
@@ -21,14 +20,9 @@ def do_simulation_step(environment):
 	sensor_readings = [get_sensor_readings(environment, x, y, theta, sensor_angle) for sensor_angle in sensor_angles]
 	forcelets = [forcelet(sr, sa) for sr, sa in zip(sensor_readings, sensor_angles)]
 
-	x_dot = (math.cos(theta) * speed)
-	y_dot = (math.sin(theta) * speed)
+	x_dot = math.cos(theta) * speed
+	y_dot = math.sin(theta) * speed
 	theta_dot = sum(forcelets) + numpy.random.normal(0, 0.1)
-
-	#~ print( forcelets )
-	#~ print( sum(forcelets) )
-	#~ print( '{0:.3} {1:.3}'.format(x,y) )
-	#~ print( int(round((theta / (2*math.pi) * 360 + 360) % 360)) )
 
 	x = x + x_dot / 10
 	y = y + y_dot / 10
@@ -93,13 +87,17 @@ def print_status(environment, x, y, theta):
 	status = environment.astype(numpy.uint8)
 	status[status==0] = ord(' ')
 	status[status==1] = ord('#')
-	coordinates = (int(round(y)), int(round(x)))
-	status[coordinates] = ord('R')
+
+	status[int(round(y)), int(round(x))] = ord('R')
 
 	sensor_readings = [get_sensor_readings(environment, x, y, theta, sensor_angle, get_obstacle_coords=True) for sensor_angle in sensor_angles]
 	for distance, coords in sensor_readings:
-		x, y = coords
-		status[y,x] = ord('O')
+		if coords:
+			x_obs, y_obs = coords
+			status[y_obs,x_obs] = ord('O')
+
+	try: status[y + math.sin(theta) * 3, x + math.cos(theta) * 3] = ord('T')
+	except: pass
 
 	status = status[::-1,:]
 	for row in status:
