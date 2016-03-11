@@ -29,7 +29,6 @@ for y in range(environment_height):
 r2d2 = Bot(field, x, y, theta)
 field.setBot(r2d2)
 
-robotics.print_status(environment, x, y, theta)
 while(not field.halt):
 	x, y, theta = robotics.do_simulation_step(environment)
 	field.getBot().moveToAndRotate(x, y, theta)
