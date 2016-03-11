@@ -26,11 +26,12 @@ for y in range(10):
 	for x in range(30):
 		if environment[y][x]:
 			field.addObstacle(Obstacle(field, x, y, 1, 1))
-			
+
 # add bot
 r2d2 = Bot(field, x, y, theta)
 field.setBot(r2d2)
 
+robotics.print_status(environment, x, y, theta)
 while(not field.halt):
 	x, y, theta = robotics.do_simulation_step(environment)
 	field.getBot().moveToAndRotate(x, y, theta)

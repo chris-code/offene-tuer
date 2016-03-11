@@ -8,11 +8,11 @@ class Field:
 		self.height_scale_factor = height_scale_factor
 		self.master = Tk()
 		self.master.bind('<Escape>', self.close)
-		self.canvas = canvas = Canvas(self.master, width=self.width, height=self.height)
+		#~ self.master.configure(background='black')
+		self.canvas = Canvas(self.master, width=self.width, height=self.height, background="#000000", highlightthickness=0)
 		self.canvas.pack()
 		self.bot = None
 		self.obstacles = []
-		self.background_id = self.canvas.create_rectangle(0, 0, self.width, self.height, fill="#000000")
 		self.halt = False
 
 	def getDimensions(self):
