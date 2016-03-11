@@ -4,10 +4,11 @@ import numpy
 x = 10.0
 y = 15.0
 theta = math.pi/4
-speed = 0.5
+speed = 1.0
 
 maximum_speed = 0.5
-sensor_cone_width = math.pi/4
+#~ sensor_cone_width = math.pi/4
+sensor_cone_width = math.pi/6
 sensor_angles = [math.pi/3, math.pi/6, 0, -math.pi/6, -math.pi/3]
 
 number_of_obstacles = 10
@@ -25,7 +26,7 @@ def do_simulation_step(environment):
 	x_dot = math.cos(theta) * maximum_speed * sigma(speed)
 	y_dot = math.sin(theta) * maximum_speed * sigma(speed)
 	speed_dot = -speed - 4.0 + (8.0/5.0) * min(min(sensor_readings[1:-1]), 5.0)
-	theta_dot = sum(forcelets) + numpy.random.normal(0, 0.2)
+	theta_dot = sum(forcelets) + numpy.random.normal(0, 0.4 - abs(speed) / 10)
 
 	x = x + x_dot / 10
 	y = y + y_dot / 10
@@ -61,7 +62,7 @@ def forcelet(sensor_reading, sensor_angle):
 	force = lambd * (-sensor_angle) * math.exp(- (sensor_angle)**2/(2*sigma**2))
 	return force
 
-def sigma(x, beta=1.0):
+def sigma(x, beta=1.5):
 	return 1.0 / (1.0 + math.exp(- beta * x))
 
 def initialize_environment(height, width):

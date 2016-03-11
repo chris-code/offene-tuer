@@ -7,25 +7,23 @@ from obstacle import Obstacle
 import robotics
 
 # canvas and environment height
-canvas_width = 900
-canvas_height = 600
-
 environment_width = 30
 environment_height = 20
 
-# calculate scale factors
-width_scale_factor = canvas_width / environment_width
-height_scale_factor = canvas_height / environment_height
+canvas_width = 900
+scaling_factor = canvas_width / environment_width
+canvas_height = int(round(environment_height * scaling_factor))
 
 # initialize
 environment = robotics.initialize_environment(environment_height, environment_width)
-field = Field(canvas_width, canvas_height, width_scale_factor, height_scale_factor)
+field = Field(canvas_width, canvas_height, scaling_factor)
 x, y, theta = robotics.do_simulation_step(environment)
+
 # add obstacles
-for y in range(10):
-	for x in range(30):
+for y in range(environment_height):
+	for x in range(environment_width):
 		if environment[y][x]:
-			field.addObstacle(Obstacle(field, x, y, 1, 1))
+			field.addObstacle(Obstacle(field, x, y))
 
 # add bot
 r2d2 = Bot(field, x, y, theta)
