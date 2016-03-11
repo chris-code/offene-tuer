@@ -1,9 +1,11 @@
 from tkinter import *
 
 class Field:
-	def __init__(self, width, height):
+	def __init__(self, width, height, width_scale_factor, height_scale_factor):
 		self.width = width
 		self.height = height
+		self.width_scale_factor = width_scale_factor
+		self.height_scale_factor = height_scale_factor
 		self.master = Tk()
 		self.canvas = canvas = Canvas(self.master, width=self.width, height=self.height)
 		self.canvas.pack()
@@ -13,8 +15,11 @@ class Field:
 	def getDimensions(self):
 		return (self.width, self.height)
 
-	def addElement(self, element):
-		self.element.append(element)
+	def getScaleFactors(self):
+		return (self.width_scale_factor, self.height_scale_factor)
+
+	def addObstacle(self, obstacles):
+		self.obstacles.append(obstacles)
 
 	def getCanvas(self):
 		return self.canvas
