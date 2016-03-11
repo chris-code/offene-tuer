@@ -12,6 +12,10 @@ class Bot:
 		self.x = self._calcX(x)
 		self.y = self.field.getDimensions()[1] - y - 1
 		self.theta = theta
+		self.circle_id = self.canvas.create_oval(self.x - bot_radius, self.y - bot_radius, self.x + bot_radius, self.y + bot_radius, fill=bot_color)
+		head_x = math.cos(self.theta) * arrow_length
+		head_y = math.sin(self.theta) * arrow_length
+		self.line_id = self.canvas.create_line(self.x, self.y, self.x + head_x, self.y - head_y, fill="#000000", width=3)
 
 	def moveToAndRotate(self, x, y, theta):
 		self.x = self._calcX(x)
@@ -29,10 +33,10 @@ class Bot:
 		self.field.paint()
 
 	def paint(self):
-		self.canvas.create_oval(self.x - bot_radius, self.y - bot_radius, self.x + bot_radius, self.y + bot_radius, fill=bot_color)
+		self.canvas.coords(self.circle_id, self.x - bot_radius, self.y - bot_radius, self.x + bot_radius, self.y + bot_radius)
 		head_x = math.cos(self.theta) * arrow_length
 		head_y = math.sin(self.theta) * arrow_length
-		self.canvas.create_line(self.x, self.y, self.x + head_x, self.y - head_y, fill="#000000", width=3)
+		self.canvas.coords(self.line_id, self.x, self.y, self.x + head_x, self.y - head_y)
 
 	def _calcY(self, y):
 		return self.field.getDimensions()[1] - (y * self.field.getScaleFactors()[1])
