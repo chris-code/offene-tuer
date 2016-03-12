@@ -1,17 +1,23 @@
 import math
 import random
 
-# Initialize Parameters
-x = 0.0
-y = 0.0
-theta = 0.0
-speed = 0.0
+# Robot parameters
+maximum_speed = 0.1 # Less than 0.3 is reasonable
+number_of_sensors = 3 # Must be at least two
+sensor_cone_width = 62
+sensor_mount_angle = 120
 
-maximum_speed = 0.1
-sensor_cone_width = math.pi/2.9
-sensor_angles = [math.pi/3, 0, -math.pi/3]
-time_scale = 1 / 10.0
+# Environment and simulation parameters
 number_of_obstacles = 10
+time_scale = 1 / 10.0
+
+# Sanitize input, convert to radians, set up sensors
+number_of_sensors = int(round(number_of_sensors))
+number_of_obstacles = int(round(number_of_obstacles))
+sensor_cone_width *= (1.0 / 360.0) * 2 * math.pi
+sensor_mount_angle *= (1.0 / 360.0) * 2 * math.pi
+sensor_angles = [sensor_mount_angle * (-0.5 + i * 1.0 / (number_of_sensors-1)) for i in range(number_of_sensors)]
+sensor_angles.reverse()
 
 def do_simulation_step(environment):
 	'''Given an environment, give the robot's next position and orientation'''
@@ -23,10 +29,10 @@ def do_simulation_step(environment):
 	sensor_data = [ get_sensor_data(environment, x, y, theta, sensor_angle) for sensor_angle in sensor_angles ]
 	forcelets = [ forcelet(sd, sa) for sd, sa in zip(sensor_data, sensor_angles) ]
 
-	x_dot = math.cos(theta) * maximum_speed * sigma(speed)
-	y_dot = math.sin(theta) * maximum_speed * sigma(speed)
+	x_dot = math.cos(theta) * maximum_speed * sigmoid(speed)
+	y_dot = math.sin(theta) * maximum_speed * sigmoid(speed)
 	speed_dot = -speed - 4.0 + (8.0/5.0) * min(min(sensor_data), 5.0)
-	theta_dot = sum(forcelets) + random.gauss(0, (0.4 - abs(speed) / 10))
+	theta_dot = sum(forcelets) + random.gauss(0, 0.4 - abs(speed) / 10)
 
 	x = x + x_dot * time_scale
 	y = y + y_dot * time_scale
@@ -62,7 +68,7 @@ def forcelet(sensor_reading, sensor_angle):
 	force = lambd * (-sensor_angle) * math.exp(- (sensor_angle)**2/(2*sigma**2))
 	return force
 
-def sigma(x, beta=1.0):
+def sigmoid(x, beta=1.0):
 	return 1.0 / (1.0 + math.exp(- beta * x))
 
 def initialize_environment(height, width):
