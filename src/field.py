@@ -27,9 +27,6 @@ class Field:
 	def getCanvas(self):
 		return self.canvas
 
-	def getBot(self):
-		return self.bot
-
 	def setBot(self, bot):
 		self.bot = bot
 		self.paint()

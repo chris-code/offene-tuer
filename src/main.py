@@ -31,5 +31,4 @@ field.setBot(r2d2)
 
 while(not field.halt):
 	x, y, theta = robotics.do_simulation_step(environment)
-	field.getBot().moveToAndRotate(x, y, theta)
-	#time.sleep(0.1)
+	r2d2.moveToAndRotate(x, y, theta)

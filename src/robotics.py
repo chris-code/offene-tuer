@@ -2,16 +2,16 @@ import math
 import random
 import numpy
 
-x = 10.0
-y = 15.0
-theta = math.pi/4
-speed = 1.0
+# Initialize Parameters
+x = 0.0
+y = 0.0
+theta = 0.0
+speed = 0.0
 
 maximum_speed = 0.5
-sensor_cone_width = math.pi/4
-#~ sensor_cone_width = math.pi/6
-sensor_angles = [math.pi/3, math.pi/6, 0, -math.pi/6, -math.pi/3]
-
+sensor_cone_width = math.pi/2.9
+sensor_angles = [math.pi/3, 0, -math.pi/3]
+time_scale = 1 / 10.0
 number_of_obstacles = 10
 
 def do_simulation_step(environment):
@@ -21,22 +21,22 @@ def do_simulation_step(environment):
 	global theta
 	global speed
 
-	sensor_readings = [get_sensor_readings(environment, x, y, theta, sensor_angle) for sensor_angle in sensor_angles]
-	forcelets = [forcelet(sr, sa) for sr, sa in zip(sensor_readings, sensor_angles)]
+	sensor_data = [get_sensor_data(environment, x, y, theta, sensor_angle) for sensor_angle in sensor_angles]
+	forcelets = [forcelet(sd, sa) for sd, sa in zip(sensor_data, sensor_angles)]
 
 	x_dot = math.cos(theta) * maximum_speed * sigma(speed)
 	y_dot = math.sin(theta) * maximum_speed * sigma(speed)
-	speed_dot = -speed - 4.0 + (8.0/5.0) * min(min(sensor_readings[1:-1]), 5.0)
-	theta_dot = sum(forcelets) + random.gauss(0, 1.5 * (0.4 - abs(speed) / 10))
+	speed_dot = -speed - 4.0 + (8.0/5.0) * min(min(sensor_data), 5.0)
+	theta_dot = sum(forcelets) + random.gauss(0, (0.4 - abs(speed) / 10))
 
-	x = x + x_dot / 10
-	y = y + y_dot / 10
-	theta = theta + theta_dot / 10
-	speed = speed + speed_dot / 10
+	x = x + x_dot * time_scale
+	y = y + y_dot * time_scale
+	theta = theta + theta_dot * time_scale
+	speed = speed + speed_dot * time_scale
 
 	return x, y, theta
 
-def get_sensor_readings(environment, x, y, theta, sensor_angle, get_obstacle_coords=False):
+def get_sensor_data(environment, x, y, theta, sensor_angle, get_obstacle_coords=False):
 	angle = theta + sensor_angle
 
 	closest_distance = 2**30
@@ -98,7 +98,7 @@ def initialize_robot(environment):
 	global x, y, theta, speed
 
 	environment_height, environment_width = environment.shape
-	for attempt in range(100):
+	for _ in range(100):
 		x = random.uniform(1, environment_width-2)
 		y = random.uniform(1, environment_height-2)
 
