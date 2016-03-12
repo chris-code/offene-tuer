@@ -1,6 +1,5 @@
 import math
 import random
-import numpy
 
 # Initialize Parameters
 x = 0.0
@@ -8,7 +7,7 @@ y = 0.0
 theta = 0.0
 speed = 0.0
 
-maximum_speed = 0.5
+maximum_speed = 0.1
 sensor_cone_width = math.pi/2.9
 sensor_angles = [math.pi/3, 0, -math.pi/3]
 time_scale = 1 / 10.0
@@ -21,8 +20,8 @@ def do_simulation_step(environment):
 	global theta
 	global speed
 
-	sensor_data = [get_sensor_data(environment, x, y, theta, sensor_angle) for sensor_angle in sensor_angles]
-	forcelets = [forcelet(sd, sa) for sd, sa in zip(sensor_data, sensor_angles)]
+	sensor_data = [ get_sensor_data(environment, x, y, theta, sensor_angle) for sensor_angle in sensor_angles ]
+	forcelets = [ forcelet(sd, sa) for sd, sa in zip(sensor_data, sensor_angles) ]
 
 	x_dot = math.cos(theta) * maximum_speed * sigma(speed)
 	y_dot = math.sin(theta) * maximum_speed * sigma(speed)
@@ -43,7 +42,7 @@ def get_sensor_data(environment, x, y, theta, sensor_angle, get_obstacle_coords=
 	closest_obstacle = None
 	for obs_y, row in enumerate(environment):
 		for obs_x, obstacle in enumerate(row):
-			if obstacle == True:
+			if obstacle:
 				obstacle_angle = math.atan2(obs_y - y, obs_x - x)
 				angle_difference = math.atan2(math.sin(angle - obstacle_angle), math.cos(angle-obstacle_angle))
 				if abs(angle_difference) < sensor_cone_width / 2:
@@ -68,11 +67,9 @@ def sigma(x, beta=1.0):
 
 def initialize_environment(height, width):
 	'''Takes width and height and creates a 2D environment of that size'''
-	environment = numpy.zeros(shape=(height, width), dtype=numpy.bool_)
-	environment[:,0] = True
-	environment[:,-1] = True
-	environment[0,:] = True
-	environment[-1,:] = True
+	environment = [ [True] + [False]*(width-2) + [True] for _ in range(height) ]
+	environment[0] = [True]*width
+	environment[-1] = [True]*width
 
 	add_obstacles(environment, number_of_obstacles)
 
@@ -81,7 +78,7 @@ def initialize_environment(height, width):
 	return environment
 
 def add_obstacles(environment, number_of_obstacles):
-	environment_height, environment_width = environment.shape
+	environment_height, environment_width = len(environment), len(environment[0])
 
 	for _ in range(number_of_obstacles):
 		x_center = random.uniform(2, environment_width-3)
@@ -92,17 +89,20 @@ def add_obstacles(environment, number_of_obstacles):
 
 		for x in range(x_center-1, x_center+2):
 			for y in range(y_center-1, y_center+2):
-				environment[y,x] = True
+				environment[y][x] = True
 
 def initialize_robot(environment):
 	global x, y, theta, speed
 
-	environment_height, environment_width = environment.shape
+	environment_height, environment_width = len(environment), len(environment[0])
 	for _ in range(100):
 		x = random.uniform(1, environment_width-2)
 		y = random.uniform(1, environment_height-2)
 
-		if not environment[y,x]:
+		x = int(round(x))
+		y = int(round(y))
+
+		if not environment[y][x]:
 			break
 
 	theta = random.uniform(0, 2 * math.pi)
