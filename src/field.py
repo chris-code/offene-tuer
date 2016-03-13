@@ -5,31 +5,27 @@ class Field:
 		self.width = width
 		self.height = height
 		self.scaling_factor = scaling_factor
-		self.master = Tk()
-		self.master.bind('<Escape>', self.close)
-
-		self.canvas = Canvas(self.master, width=self.width, height=self.height, background="#000000", highlightthickness=0)
-		self.canvas.pack()
 
 		self.bot = None
 		self.obstacles = []
 		self.halt = False
 
-	def getDimensions(self):
-		return (self.width, self.height)
+		self.master = Tk()
+		self.master.bind('<Escape>', self.close)
+		self.canvas = Canvas(self.master, width=self.width, height=self.height, background="#000000", highlightthickness=0)
+		self.canvas.pack()
 
-	def getScalingFactor(self):
-		return self.scaling_factor
+	def transformCoordinates(self, x, y):
+		newX = (x + 0.5) * self.scaling_factor
+		newY = self.height - (y + 0.5) * self.scaling_factor
+
+		return newX, newY
+
+	def transformLength(self, l):
+		return l * self.scaling_factor
 
 	def addObstacle(self, obstacles):
 		self.obstacles.append(obstacles)
-
-	def getCanvas(self):
-		return self.canvas
-
-	def setBot(self, bot):
-		self.bot = bot
-		self.paint()
 
 	def paint(self):
 		self.bot.paint()
