@@ -1,10 +1,14 @@
 from tkinter import *
+import obstacle
+import bot
+
+canvas_width = 900
 
 class Field:
-	def __init__(self, width, height, scaling_factor):
-		self.width = width
-		self.height = height
-		self.scaling_factor = scaling_factor
+	def __init__(self, data_width, data_height):
+		self.scaling_factor = canvas_width / data_width
+		self.width = canvas_width
+		self.height = int(round(data_height * self.scaling_factor))
 
 		self.bot = None
 		self.obstacles = []
@@ -24,8 +28,15 @@ class Field:
 	def transformLength(self, l):
 		return l * self.scaling_factor
 
-	def addObstacle(self, obstacles):
-		self.obstacles.append(obstacles)
+	def addObstacle(self, x, y):
+		obs = obstacle.Obstacle(self, x, y)
+		self.obstacles.append(obs)
+
+	def initializeBot(self, x, y, theta):
+		self.bot = bot.Bot(self, x, y, theta)
+
+	def moveBot(self, x, y, theta):
+		self.bot.moveToAndRotate(x, y, theta)
 
 	def paint(self):
 		self.bot.paint()

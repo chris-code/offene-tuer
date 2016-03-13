@@ -8,6 +8,8 @@ sensor_cone_width = 62
 sensor_mount_angle = 120
 
 # Environment and simulation parameters
+environment_width = 30
+environment_height = 20
 number_of_obstacles = 10
 time_scale = 1 / 10.0
 
@@ -64,11 +66,11 @@ def forcelet(sensor_reading, sensor_angle):
 def sigmoid(x, beta=1.0):
 	return 1.0 / (1.0 + math.exp(- beta * x))
 
-def initialize_environment(height, width):
+def initialize_environment():
 	'''Takes width and height and creates a 2D environment of that size'''
-	environment = [ [True] + [False]*(width-2) + [True] for _ in range(height) ]
-	environment[0] = [True]*width
-	environment[-1] = [True]*width
+	environment = [ [True] + [False]*(environment_width-2) + [True] for _ in range(environment_height) ]
+	environment[0] = [True] * environment_width
+	environment[-1] = [True] * environment_width
 
 	add_obstacles(environment, number_of_obstacles)
 

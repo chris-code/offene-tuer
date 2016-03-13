@@ -1,35 +1,28 @@
 import math
 import time
 
-from bot import Bot
 from field import Field
-from obstacle import Obstacle
+#~ from terminal_output import Field
 import robotics
 
-# canvas and environment height
-environment_width = 30
-environment_height = 20
-
-canvas_width = 900
-scaling_factor = canvas_width / environment_width
-canvas_height = int(round(environment_height * scaling_factor))
-
-# initialize
-environment = robotics.initialize_environment(environment_height, environment_width)
-field = Field(canvas_width, canvas_height, scaling_factor)
+# Initialize robotics
+environment = robotics.initialize_environment()
 x, y, theta = robotics.do_simulation_step(environment)
 
-# add obstacles
-for y in range(environment_height):
-	for x in range(environment_width):
-		if environment[y][x]:
-			field.addObstacle(Obstacle(field, x, y))
+# Initialize GUI
+field = Field(robotics.environment_width, robotics.environment_height)
 
-# add bot
-r2d2 = Bot(field, x, y, theta)
-field.bot = r2d2
+# Add obstacles to GUI
+for y, row in enumerate(environment):
+	for x, element in enumerate(row):
+		if element:
+			field.addObstacle(x, y)
 
+# Create bot
+field.initializeBot(x, y, theta)
+
+# Main loop, runs indefinitely
 while(not field.halt):
 	x, y, theta = robotics.do_simulation_step(environment)
-	r2d2.moveToAndRotate(x, y, theta)
+	field.moveBot(x, y, theta)
 	field.paint()
