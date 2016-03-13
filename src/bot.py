@@ -1,12 +1,16 @@
 from tkinter import *
 import math
 
-arrow_length = 13
-bot_radius = 15
+arrow_length = 0.5
+bot_radius = 0.5
 bot_color = "#115EA6"
 
 class Bot:
 	def __init__(self, field, x, y, theta):
+		global bot_radius, arrow_length
+		bot_radius *= field.getScalingFactor()
+		arrow_length *= field.getScalingFactor()
+
 		self.field = field
 		self.canvas = self.field.getCanvas()
 		self.x = self._calcX(x)

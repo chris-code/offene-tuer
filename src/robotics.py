@@ -41,26 +41,19 @@ def do_simulation_step(environment):
 
 	return x, y, theta
 
-def get_sensor_data(environment, x, y, theta, sensor_angle, get_obstacle_coords=False):
-	angle = theta + sensor_angle
+def get_sensor_data(environment, x, y, theta, sensor_angle):
+	real_sensor_angle = theta + sensor_angle
 
 	closest_distance = 2**30
-	closest_obstacle = None
 	for obs_y, row in enumerate(environment):
 		for obs_x, obstacle in enumerate(row):
 			if obstacle:
 				obstacle_angle = math.atan2(obs_y - y, obs_x - x)
-				angle_difference = math.atan2(math.sin(angle - obstacle_angle), math.cos(angle-obstacle_angle))
-				if abs(angle_difference) < sensor_cone_width / 2:
+				angle_difference = math.atan2(math.sin(real_sensor_angle - obstacle_angle), math.cos(real_sensor_angle - obstacle_angle))
+				if abs(angle_difference) < sensor_cone_width / 2.0:
 					distance = math.sqrt((obs_x - x)**2 + (obs_y - y)**2)
-					if distance < closest_distance:
-						closest_distance = distance
-						closest_obstacle = (obs_x, obs_y)
-
-	if get_obstacle_coords == True:
-		return closest_distance, closest_obstacle
-	else:
-		return closest_distance
+					closest_distance = min(closest_distance, distance)
+	return closest_distance
 
 def forcelet(sensor_reading, sensor_angle):
 	lambd = 3.0 * math.exp(-sensor_reading / 1.0)
