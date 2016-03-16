@@ -1,0 +1,73 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage[parfill]{parskip} % Empty line instead of indentation
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{eurosym} %Euro symbol
+%\usepackage[ngerman]{babel}
+\usepackage{cancel} %Kürzen
+
+\newcommand\braces[1]{\left(#1\right)}
+\newcommand\brackets[1]{\left[#1\right]}
+\renewcommand{\vec}[1]{\underline{#1}}
+\newcommand{\mat}[1]{\underline{\underline{#1}}}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand\tr[1]{\mathrm{tr}\br{#1}}
+\newcommand\average[1]{\left\langle#1\right\rangle}
+\newcommand{\acos}[1]{\mathrm{acos}\braces{#1}}
+\newcommand{\asin}[1]{\mathrm{asin}\braces{#1}}
+\newcommand{\intend}[1][]{\ \mathrm{d}#1}
+\newcommand{\derivative}[2][]{\ \frac{\mathrm{d}#1}{\mathrm{d}#2}} %\derivative[a]{b}
+\newcommand\expectedValue[1]{\mathbb{E}\braces{#1}}
+\newcommand\variance[1]{\mathbb{V}\braces{#1}}
+\newcommand\setequal{\overset{!}{=}}
+\newcommand{\gerquote}[1]{\glqq#1\grqq}
+
+\title{Tag der offenen Tür}
+\author{Studiengang Angewandte Informatik}
+\date{17.03.2016}
+
+\begin{document}
+\maketitle
+
+In dem beiliegenden Demo-Programm wird ein autonomer, d.h. sich selbst steuernder, Roboter simuliert. Dieser kann sich drehen und vorwärts bewegen, aber nicht seitwärts. Er ist mit Sensoren ausgestattet, die nach Vorne gerichtet in gleichem Abstand angebracht sind und in einem gewissen Winkel die Entfernung zum nächsten Gegenstand messen.
+
+\begin{center}
+	\includegraphics{robot.png}
+\end{center}
+
+Ziel ist es, den Roboter Hindernissen ausweichen zu lassen. Dazu dreht er nach rechts ab, wenn die Sensoren auf der linken Seite Hindernisse erkennen (und umgekehrt). Außerdem wird er langsamer, wenn er auf ein Hindernis zu fährt. Hierbei gibt es viele Parameter, die die Performance des Roboters beeinflussen:
+
+\begin{description}
+	\item[sensor mount angle] Der Winkel, auf dem die Sensoren angeordnet sind
+	\item[sensor cone width] Der Winkel, in dem ein einzelner Sensor Hindernisse wahrnimmt
+	\item[number of sensors] Die Anzahl der angebrachten Sensoren
+	\item[maximum speed] Die Höchstgeschwindigkeit bei freier Bahn
+	\item[repulsion force] Wie stark der Roboter von einem Hindernis weg rotiert
+	\item[distance decay] Umso größer dieser Wert ist, umso mehr ignoriert der Roboter Hindernisse die weiter entfernt sind.
+\end{description}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

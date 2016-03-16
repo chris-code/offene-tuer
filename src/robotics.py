@@ -4,8 +4,10 @@ import random
 # Robot parameters
 maximum_speed = 0.1 # Less than 0.3 is reasonable
 number_of_sensors = 3 # Must be at least two
-sensor_cone_width = 62
-sensor_mount_angle = 120
+sensor_cone_width = 47
+sensor_mount_angle = 90
+repulsion_force = 3.0
+distance_decay = 1.0
 
 # Environment and simulation parameters
 environment_width = 30
@@ -34,7 +36,7 @@ def do_simulation_step(environment):
 	x_dot = math.cos(theta) * maximum_speed * sigmoid(speed)
 	y_dot = math.sin(theta) * maximum_speed * sigmoid(speed)
 	speed_dot = -speed - 4.0 + (8.0/5.0) * min(min(sensor_data), 5.0)
-	theta_dot = sum(forcelets) + random.gauss(0, 0.4 - abs(speed) / 10)
+	theta_dot = sum(forcelets) + random.gauss(0, 0.1 - abs(speed) / 40)
 
 	x = x + x_dot * time_scale
 	y = y + y_dot * time_scale
@@ -58,7 +60,7 @@ def get_sensor_data(environment, x, y, theta, sensor_angle):
 	return closest_distance
 
 def forcelet(sensor_reading, sensor_angle):
-	lambd = 3.0 * math.exp(-sensor_reading / 1.0)
+	lambd = repulsion_force * math.exp(-sensor_reading / distance_decay)
 	sigma = math.atan(math.tan(sensor_cone_width/2.0) + (1.0 / (1.0 + sensor_reading)))
 	force = lambd * (-sensor_angle) * math.exp(- (sensor_angle)**2/(2*sigma**2))
 	return force
