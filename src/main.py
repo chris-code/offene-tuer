@@ -1,7 +1,6 @@
 import math
 import time
-#~ from terminal_output import Field
-from graphical_output import Field
+from terminal_output import Field
 import robotics
 
 # Initialize robotics

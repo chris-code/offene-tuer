@@ -23,7 +23,7 @@ class Field:
 			if row_number != bot_y:
 				print(row_data)
 			else:
-				row_with_bot = row_data[:bot_x] + 'b' + row_data[bot_x+1:]
+				row_with_bot = row_data[:bot_x] + 'R' + row_data[bot_x+1:]
 				print(row_with_bot)
 		print('')
 

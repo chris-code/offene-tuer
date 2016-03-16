@@ -7,7 +7,7 @@ number_of_sensors = 3 # Must be at least two
 sensor_cone_width = 47
 sensor_mount_angle = 90
 repulsion_force = 3.0
-distance_decay = 1.0
+distance_decay = 1.5
 
 # Environment and simulation parameters
 environment_width = 30
