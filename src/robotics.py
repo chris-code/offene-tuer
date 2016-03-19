@@ -2,17 +2,25 @@ import math
 import random
 
 # Robot parameters
+#~ maximum_speed = 0.1 # Less than 0.3 is reasonable
+#~ number_of_sensors = 3 # Must be at least two
+#~ sensor_cone_width = 47
+#~ sensor_mount_angle = 90
+#~ repulsion_force = 3.0
+#~ distance_decay = 1.5
+
 maximum_speed = 0.1 # Less than 0.3 is reasonable
-number_of_sensors = 3 # Must be at least two
-sensor_cone_width = 47
-sensor_mount_angle = 90
-repulsion_force = 3.0
+number_of_sensors = 5 # Must be at least two
+sensor_cone_width = 42
+sensor_mount_angle = 160
+repulsion_force = 1.5
 distance_decay = 1.5
 
 # Environment and simulation parameters
 environment_width = 30
 environment_height = 20
-number_of_obstacles = 10
+#~ number_of_obstacles = 10
+number_of_obstacles = 20
 time_scale = 1 / 10.0
 
 # Sanitize input, convert to radians, set up sensors
@@ -38,8 +46,12 @@ def do_simulation_step(environment):
 	speed_dot = -speed - 4.0 + (8.0/5.0) * min(min(sensor_data), 5.0)
 	theta_dot = sum(forcelets) + random.gauss(0, 0.1 - abs(speed) / 40)
 
+	obstacle_force_x, obstacle_force_y = prevent_block_crossing(environment, x, y)
+	x_dot += obstacle_force_x
+	y_dot += obstacle_force_y
+
 	x = x + x_dot * time_scale
-	y = y + y_dot * time_scale
+	y = y + y_dot * time_scale + obstacle_force_y
 	theta = theta + theta_dot * time_scale
 	speed = speed + speed_dot * time_scale
 
@@ -67,6 +79,28 @@ def forcelet(sensor_reading, sensor_angle):
 
 def sigmoid(x, beta=1.0):
 	return 1.0 / (1.0 + math.exp(- beta * x))
+
+def distance(x1, y1, x2, y2):
+	return math.sqrt((x1-x2)**2 + (y1-y2)**2)
+
+def prevent_block_crossing(environment, x, y):
+	'''This function prevents the robot from entering a square occupied by an obstacle.
+	It is a rudimentary way to implement the obstacles as an actual, physical barrier'''
+	grid_x, grid_y = int(round(x)), int(round(y))
+	move_x, move_y = 0, 0 # the
+
+	direct_neighbors = [(grid_x + offset_x, grid_y + offset_y) for offset_x, offset_y in [(1,0), (0,1), (-1,0), (0,-1)]]
+	for n_x, n_y in direct_neighbors:
+		try:
+			if environment[n_y][n_x] == True:
+				if n_x == grid_x and abs(y - n_y) < 1: # upper / lower neighbor
+					move_y += 1.0 / (y - n_y) # move away horizontally
+				elif n_y == grid_y and abs(x - n_x) < 1: # left / right neighbor
+					move_x += 1.0 / (x - n_x) # move away vertically
+		except IndexError:
+			pass
+
+	return move_x / 100.0, move_y / 100.0
 
 def initialize_environment():
 	'''Takes width and height and creates a 2D environment of that size'''
@@ -105,7 +139,7 @@ def initialize_robot(environment):
 		x = int(round(x))
 		y = int(round(y))
 
-		if not environment[y][x]:
+		if environment[y][x] == False:
 			break
 
 	theta = random.uniform(0, 2 * math.pi)
