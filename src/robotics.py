@@ -2,25 +2,17 @@ import math
 import random
 
 # Robot parameters
-#~ maximum_speed = 0.1 # Less than 0.3 is reasonable
-#~ number_of_sensors = 3 # Must be at least two
-#~ sensor_cone_width = 47
-#~ sensor_mount_angle = 90
-#~ repulsion_force = 3.0
-#~ distance_decay = 1.5
-
 maximum_speed = 0.1 # Less than 0.3 is reasonable
-number_of_sensors = 5 # Must be at least two
-sensor_cone_width = 42
-sensor_mount_angle = 160
-repulsion_force = 1.5
+number_of_sensors = 3 # Must be at least two
+sensor_cone_width = 47
+sensor_mount_angle = 90
+repulsion_force = 3.0
 distance_decay = 1.5
 
 # Environment and simulation parameters
 environment_width = 30
 environment_height = 20
-#~ number_of_obstacles = 10
-number_of_obstacles = 20
+number_of_obstacles = 10
 time_scale = 1 / 10.0
 
 # Sanitize input, convert to radians, set up sensors
@@ -33,10 +25,8 @@ sensor_angles.reverse()
 
 def do_simulation_step(environment):
 	'''Given an environment, give the robot's next position and orientation'''
-	global x
-	global y
-	global theta
-	global speed
+
+	global x, y, theta, speed
 
 	sensor_data = [ get_sensor_data(environment, x, y, theta, sensor_angle) for sensor_angle in sensor_angles ]
 	forcelets = [ forcelet(sd, sa) for sd, sa in zip(sensor_data, sensor_angles) ]
@@ -86,24 +76,25 @@ def distance(x1, y1, x2, y2):
 def prevent_block_crossing(environment, x, y):
 	'''This function prevents the robot from entering a square occupied by an obstacle.
 	It is a rudimentary way to implement the obstacles as an actual, physical barrier'''
-	grid_x, grid_y = int(round(x)), int(round(y))
-	move_x, move_y = 0, 0 # the
 
+	grid_x, grid_y = int(round(x)), int(round(y))
+	move_x, move_y = 0, 0 # the movement change induced by obstacles
+
+	# Check for collisions with all neighbors
 	direct_neighbors = [(grid_x + offset_x, grid_y + offset_y) for offset_x, offset_y in [(1,0), (0,1), (-1,0), (0,-1)]]
 	for n_x, n_y in direct_neighbors:
-		try:
+		if 0 <= n_x <= len(environment[0]) and 0 <= n_y <= len(environment):
 			if environment[n_y][n_x] == True:
 				if n_x == grid_x and abs(y - n_y) < 1: # upper / lower neighbor
 					move_y += 1.0 / (y - n_y) # move away horizontally
 				elif n_y == grid_y and abs(x - n_x) < 1: # left / right neighbor
 					move_x += 1.0 / (x - n_x) # move away vertically
-		except IndexError:
-			pass
 
 	return move_x / 100.0, move_y / 100.0
 
 def initialize_environment():
 	'''Takes width and height and creates a 2D environment of that size'''
+
 	environment = [ [True] + [False]*(environment_width-2) + [True] for _ in range(environment_height) ]
 	environment[0] = [True] * environment_width
 	environment[-1] = [True] * environment_width
