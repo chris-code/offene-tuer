@@ -22,7 +22,7 @@ class Robot:
 	def step(self, env):
 		'''Given an environment, give the robot's next position and orientation'''
 
-		sensor_data = [ self.get_sensor_data(env, sa) for sa in self.sensor_angles ]
+		sensor_data = self.get_sensor_data(env)
 		forcelets = [ self.forcelet(sd, sa) for sd, sa in zip(sensor_data, self.sensor_angles) ]
 		obstacle_force_x, obstacle_force_y = self.prevent_block_crossing(env)
 
@@ -41,17 +41,22 @@ class Robot:
 
 		return self.x, self.y, self.theta, self.speed
 
-	def get_sensor_data(self, env, sensor_angle):
-		real_sensor_angle = self.theta + sensor_angle
+	def get_sensor_data(self, env):
+		sensor_data = []
+		distances = env.get_distances(self.x, self.y) # Distance to every obstacle
+		angles = env.get_angles(self.x, self.y) # Angle to every obstacle
 
-		closest_distance = 2**30
-		for obs_x, obs_y in env:
-			obstacle_angle = math.atan2(obs_y - self.y, obs_x - self.x)
-			angle_difference = math.atan2(math.sin(real_sensor_angle - obstacle_angle), math.cos(real_sensor_angle - obstacle_angle))
-			if abs(angle_difference) < self.sensor_cone_width / 2.0:
-				obs_distance = distance(obs_x, obs_y, self.x, self.y)
-				closest_distance = min(closest_distance, obs_distance)
-		return closest_distance
+		for sa in self.sensor_angles:
+			absolute_sa = self.theta + sa
+
+			closest_distance = 2**30
+			for obs_x, obs_y in env:
+				angle_difference = math.atan2( math.sin(absolute_sa - angles[(obs_x, obs_y)]), math.cos(absolute_sa - angles[(obs_x, obs_y)]) )
+				if abs(angle_difference) < self.sensor_cone_width / 2.0:
+					closest_distance = min( closest_distance, distances[(obs_x, obs_y)] )
+			sensor_data.append(closest_distance)
+
+		return sensor_data
 
 	def forcelet(self, sensor_reading, sensor_angle):
 		lambd = self.repulsion_force * math.exp(-sensor_reading / self.distance_decay)
