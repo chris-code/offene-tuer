@@ -26,9 +26,9 @@ class Robot:
 		forcelets = [ self.forcelet(sd, sa) for sd, sa in zip(sensor_data, self.sensor_angles) ]
 		obstacle_force_x, obstacle_force_y = self.prevent_block_crossing(env)
 
-		x_dot = math.cos(self.theta) * self.maximum_speed * sigmoid(self.speed)
-		y_dot = math.sin(self.theta) * self.maximum_speed * sigmoid(self.speed)
-		speed_dot = -self.speed - 4.0 + (8.0/5.0) * min(min(sensor_data), 5.0)
+		x_dot = math.cos(self.theta) * self.maximum_speed * sigmoid(self.speed, beta=4.0)
+		y_dot = math.sin(self.theta) * self.maximum_speed * sigmoid(self.speed, beta=4.0)
+		speed_dot = 3.0 * ( -self.speed - 1.0 + (2.0/6.0) * min(min(sensor_data), 6.0) )
 		theta_dot = sum(forcelets) + random.gauss(0, 0.1 - abs(self.speed) / 40)
 
 		x_dot += obstacle_force_x
@@ -79,8 +79,8 @@ class Robot:
 					move_y += 1.0 / (self.y - n_y) # move away horizontally
 				elif n_y == grid_y and abs(self.x - n_x) < 1: # left / right neighbor
 					move_x += 1.0 / (self.x - n_x) # move away vertically
-		move_x, move_y = move_x / 100.0, move_y / 100.0
 
+		move_x, move_y = self.maximum_speed * move_x, self.maximum_speed * move_y
 		return move_x, move_y
 
 
