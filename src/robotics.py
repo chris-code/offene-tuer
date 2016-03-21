@@ -1,7 +1,7 @@
 import math
 import random
 
-class Robot:
+class Robot():
 	def __init__(self, x_start, y_start, maximum_speed, number_of_sensors, sensor_cone_width, sensor_mount_angle, repulsion_force, distance_decay, time_scale):
 		self.x, self.y = x_start, y_start
 		self.theta = random.uniform(0, math.pi*2)
@@ -28,7 +28,7 @@ class Robot:
 
 		x_dot = math.cos(self.theta) * self.maximum_speed * sigmoid(self.speed, beta=4.0)
 		y_dot = math.sin(self.theta) * self.maximum_speed * sigmoid(self.speed, beta=4.0)
-		theta_dot = sum(forcelets) + random.gauss(0, 0.1 - abs(self.speed) / 40)
+		theta_dot = sum(forcelets) + random.gauss(0, 0.1 - abs(self.speed) / 10)
 		speed_dot = self.calculate_speed_dot(sensor_data)
 
 		x_dot += obstacle_force_x
@@ -85,9 +85,9 @@ class Robot:
 		direct_neighbors = [(grid_x + offset_x, grid_y + offset_y) for offset_x, offset_y in [(1,0), (0,1), (-1,0), (0,-1)]]
 		for n_x, n_y in direct_neighbors:
 			if (n_x, n_y) in env:
-				if n_x == grid_x and abs(self.y - n_y) < 1: # upper / lower neighbor
+				if n_x == grid_x and abs(self.y - n_y) < 0.9: # upper / lower neighbor
 					move_y += 1.0 / (self.y - n_y) # move away horizontally
-				elif n_y == grid_y and abs(self.x - n_x) < 1: # left / right neighbor
+				elif n_y == grid_y and abs(self.x - n_x) < 0.9: # left / right neighbor
 					move_x += 1.0 / (self.x - n_x) # move away vertically
 
 		move_x, move_y = self.maximum_speed * move_x, self.maximum_speed * move_y

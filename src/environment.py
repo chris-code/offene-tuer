@@ -1,7 +1,7 @@
 import math
 import random
 
-class Environment:
+class Environment():
 	def __init__(self, width, height):
 		'''Takes width and height and creates a 2D environment of that size'''
 

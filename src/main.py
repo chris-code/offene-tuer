@@ -26,13 +26,11 @@ env.add_random_obstacles(number_of_obstacles)
 # Initialize robot
 x_start, y_start = env.get_free_position()
 rob = robotics.Robot(x_start, y_start, maximum_speed, number_of_sensors, sensor_cone_width, sensor_mount_angle, repulsion_force, distance_decay, time_scale)
-x, y, theta, speed = rob.step(env)
 
 # Initialize GUI
 field = Field(environment_width, environment_height)
 for x_obs, y_obs in env:
 	field.addObstacle(x_obs, y_obs)
-field.initializeBot(x_start, y_start, theta)
 
 # Draw only one out of draw_counter_mod steps
 # This is useful because we compute 1/time_scale simulation steps per second,

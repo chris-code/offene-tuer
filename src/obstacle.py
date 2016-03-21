@@ -9,7 +9,7 @@ obstacle_color = "#F6FC7C"
 obstacle_width = 1.0
 obstacle_height = 1.0
 
-class Obstacle:
+class Obstacle():
 	def __init__(self, field, x, y):
 		self.field = field
 		self.canvas = self.field.canvas

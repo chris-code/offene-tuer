@@ -8,7 +8,7 @@ import bot
 
 canvas_width = 900
 
-class Field:
+class Field():
 	def __init__(self, data_width, data_height):
 		self.scaling_factor = canvas_width / data_width
 		self.width = canvas_width
@@ -36,11 +36,11 @@ class Field:
 		obs = obstacle.Obstacle(self, x, y)
 		self.obstacles.append(obs)
 
-	def initializeBot(self, x, y, theta):
-		self.bot = bot.Bot(self, x, y, theta)
-
 	def moveBot(self, x, y, theta):
-		self.bot.moveToAndRotate(x, y, theta)
+		if not self.bot:
+			self.bot = bot.Bot(self, x, y, theta)
+		else:
+			self.bot.moveToAndRotate(x, y, theta)
 
 	def paint(self):
 		self.bot.paint()

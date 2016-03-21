@@ -6,10 +6,10 @@ else:
 import math
 
 arrow_length = 0.5
-radius = 0.5
+radius = 0.45
 bot_color = "#115EA6"
 
-class Bot:
+class Bot():
 	def __init__(self, field, x, y, theta):
 		self.field = field
 		self.canvas = self.field.canvas
