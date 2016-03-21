@@ -28,8 +28,8 @@ class Robot:
 
 		x_dot = math.cos(self.theta) * self.maximum_speed * sigmoid(self.speed, beta=4.0)
 		y_dot = math.sin(self.theta) * self.maximum_speed * sigmoid(self.speed, beta=4.0)
-		speed_dot = 3.0 * ( -self.speed - 1.0 + (2.0/6.0) * min(min(sensor_data), 6.0) )
 		theta_dot = sum(forcelets) + random.gauss(0, 0.1 - abs(self.speed) / 40)
+		speed_dot = self.calculate_speed_dot(sensor_data)
 
 		x_dot += obstacle_force_x
 		y_dot += obstacle_force_y
@@ -63,6 +63,16 @@ class Robot:
 		sigma = math.atan(math.tan(self.sensor_cone_width/2.0) + (1.0 / (1.0 + sensor_reading)))
 		force = lambd * (-sensor_angle) * math.exp(- (sensor_angle)**2/(2*sigma**2))
 		return force
+
+	def calculate_speed_dot(self, sensor_data):
+		weighted_distances = [6.0]
+		for sd, sa in zip(sensor_data, self.sensor_angles):
+			sigma = 1.25
+			wd = min(sd, 6.0) / math.exp(- sa**2 / (2 * sigma**2))
+			weighted_distances.append(wd)
+
+		speed_dot = 3.0 * ( -self.speed - 1.0 + (2.0/6.0) * min(weighted_distances) )
+		return speed_dot
 
 	def prevent_block_crossing(self, env):
 		'''This function prevents the robot from entering a square occupied by an obstacle.
