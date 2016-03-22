@@ -17,27 +17,41 @@ class Robot():
 		self.sensor_angles = [sensor_mount_angle * (-0.5 + i * 1.0 / (number_of_sensors-1)) for i in range(number_of_sensors)]
 		self.sensor_angles.reverse()
 
+		self.stuckness_score = 0
+
 		self.time_scale = time_scale
 
 	def step(self, env):
 		'''Given an environment, give the robot's next position and orientation'''
 
 		sensor_data = self.get_sensor_data(env)
-		forcelets = [ self.forcelet(sd, sa) for sd, sa in zip(sensor_data, self.sensor_angles) ]
-		obstacle_force_x, obstacle_force_y = self.prevent_block_crossing(env)
+		narrowness_score = self.get_narrowness_score(sensor_data)
+		obstacle_force_x, obstacle_force_y = self.prevent_block_crossing(env) # Physics prevent you from entering obstacles
 
-		x_dot = math.cos(self.theta) * self.maximum_speed * sigmoid(self.speed, beta=4.0)
+		# Calculate movement change
+		x_dot = math.cos(self.theta) * self.maximum_speed * sigmoid(self.speed, beta=4.0) # Move according to current speed and orientation
 		y_dot = math.sin(self.theta) * self.maximum_speed * sigmoid(self.speed, beta=4.0)
-		theta_dot = sum(forcelets) + random.gauss(0, 0.1 - abs(self.speed) / 10)
-		speed_dot = self.calculate_speed_dot(sensor_data)
-
 		x_dot += obstacle_force_x
 		y_dot += obstacle_force_y
 
+		# Calculate orientation change
+		forcelets = [ self.forcelet(sd, sa) for sd, sa in zip(sensor_data, self.sensor_angles) ]
+		stuckness_coeff = sigmoid(self.stuckness_score - 0.78, beta=64)
+		theta_dot = sum(forcelets) * (1-stuckness_coeff)
+		theta_dot += (math.pi/3) * stuckness_coeff
+
+		# Calculate speed change
+		speed_dot = 3.0 * ( -self.speed - 1.0 + 2.0 * (1-narrowness_score) )
+
+		# Calculate change in stuckness score
+		stuckness_score_dot = -self.stuckness_score + narrowness_score
+
+		# Update move, rotate, change speed and stuckness score
 		self.x += x_dot * self.time_scale
 		self.y += y_dot * self.time_scale
 		self.theta += theta_dot * self.time_scale
 		self.speed += speed_dot * self.time_scale
+		self.stuckness_score += stuckness_score_dot * self.time_scale
 
 		return self.x, self.y, self.theta, self.speed
 
@@ -64,15 +78,14 @@ class Robot():
 		force = lambd * (-sensor_angle) * math.exp(- (sensor_angle)**2/(2*sigma**2))
 		return force
 
-	def calculate_speed_dot(self, sensor_data):
+	def get_narrowness_score(self, sensor_data):
 		weighted_distances = [6.0]
 		for sd, sa in zip(sensor_data, self.sensor_angles):
 			sigma = 1.25
 			wd = min(sd, 6.0) / math.exp(- sa**2 / (2 * sigma**2))
 			weighted_distances.append(wd)
 
-		speed_dot = 3.0 * ( -self.speed - 1.0 + (2.0/6.0) * min(weighted_distances) )
-		return speed_dot
+		return 1 - min(weighted_distances) / 6.0
 
 	def prevent_block_crossing(self, env):
 		'''This function prevents the robot from entering a square occupied by an obstacle.
