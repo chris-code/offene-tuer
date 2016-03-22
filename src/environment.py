@@ -27,6 +27,9 @@ class Environment():
 	def add_obstacle(self, x, y):
 		self.obstacles.add((x, y))
 
+	def remove_obstacle(self, x, y):
+		self.obstacles.remove((x, y))
+
 	def add_random_obstacles(self, number_of_obstacles):
 		number_of_obstacles = int(round(number_of_obstacles))
 

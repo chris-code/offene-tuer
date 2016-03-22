@@ -16,7 +16,7 @@ distance_decay = 1.5
 # Environment and simulation parameters
 environment_width = 30
 environment_height = 20
-number_of_obstacles = 10
+number_of_obstacles = 20
 time_scale = 1 / 120.0
 
 # Initialize environment
@@ -28,9 +28,7 @@ x_start, y_start = env.get_free_position()
 rob = robotics.Robot(x_start, y_start, maximum_speed, number_of_sensors, sensor_cone_width, sensor_mount_angle, repulsion_force, distance_decay, time_scale)
 
 # Initialize GUI
-field = Field(environment_width, environment_height)
-for x_obs, y_obs in env:
-	field.addObstacle(x_obs, y_obs)
+field = Field(env)
 
 # Draw only one out of draw_counter_mod steps
 # This is useful because we compute 1/time_scale simulation steps per second,
