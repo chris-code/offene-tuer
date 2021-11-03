@@ -7,7 +7,7 @@ import robotics
 import environment
 from graphical_output import Field
 
-# Robot parameters
+# [AI]-Bot parameters
 MAXIMUM_SPEED = 6.0  # Squares per second
 NUMBER_OF_SENSORS = 5  # At least 2
 SENSOR_CONE_WIDTH = 42
@@ -28,7 +28,7 @@ def main():
 	env = environment.Environment(ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT)
 	env.add_random_obstacles(NUMBER_OF_OBSTACLES)
 
-	# Initialize robot
+	# Initialize [AI]-Bot
 	x_start, y_start = env.get_free_position()
 	rob = robotics.Robot(
 		x_start, y_start, MAXIMUM_SPEED, NUMBER_OF_SENSORS, SENSOR_CONE_WIDTH, SENSOR_MOUNT_ANGLE,

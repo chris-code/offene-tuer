@@ -21,7 +21,13 @@ class Obstacle():
 
 		top_left_x, top_left_y = self.x - self.half_width, self.y - self.half_height
 		bottom_right_x, bottom_right_y = self.x + self.half_width, self.y + self.half_height
-		self.rect_id = self.canvas.create_rectangle(top_left_x, top_left_y, bottom_right_x, bottom_right_y, fill=obstacle_color)
+		self.rect_id = self.canvas.create_rectangle(
+			top_left_x,
+			top_left_y,
+			bottom_right_x,
+			bottom_right_y,
+			fill=obstacle_color,
+		)
 
 	def delete(self):
 		self.canvas.delete(self.rect_id)

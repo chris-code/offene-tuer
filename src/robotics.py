@@ -1,16 +1,16 @@
-"""This module controls the robot's movements."""
+"""This module controls [AI]-Bot's movements."""
 
 import math
 import random
 
 
 class Robot():
-	"""This Class implements the algorithms to controll and simulate the robot."""
+	"""This Class implements the algorithms to controll and simulate [AI]-Bot."""
 
 	def __init__(
 			self, x_start, y_start, maximum_speed, number_of_sensors, sensor_cone_width,
 			sensor_mount_angle, repulsion_force, distance_decay, time_scale):
-		"""Save parameters and initialize the robot's internal state."""
+		"""Save parameters and initialize the [AI]-Bot's internal state."""
 		self.x, self.y = x_start, y_start
 		self.theta = random.uniform(0, math.pi * 2)
 		self.speed = 0

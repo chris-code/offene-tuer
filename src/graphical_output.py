@@ -21,8 +21,15 @@ class Field():
 		self.halt = False
 
 		self.master = Tk()
+		self.master.title("[AI]-Bot")
 		self.master.bind('<Escape>', self.close)
-		self.canvas = Canvas(self.master, width=self.width, height=self.height, background="#000000", highlightthickness=0)
+		self.canvas = Canvas(
+			self.master,
+			width=self.width,
+			height=self.height,
+			background="#000000",
+			highlightthickness=0,
+		)
 		self.canvas.bind('<ButtonRelease-3>', self.place_obstacle_callback)
 		self.canvas.pack()
 
