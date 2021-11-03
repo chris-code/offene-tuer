@@ -4,7 +4,7 @@ Tag der offenen Tür
 17.03.2016
 ----------
 
-In dem beiliegenden Demo-Programm wird ein autonomer, d.h. sich selbst steuernder, Roboter simuliert. Dieser kann sich drehen und vorwärts bewegen, aber nicht seitwärts. Er ist mit Sensoren ausgestattet, die nach Vorne gerichtet in gleichem Abstand angebracht sind und in einem gewissen Winkel die Entfernung zum nächsten Gegenstand messen.
+In dem beiliegenden Demo-Programm **[AI]-Bot** ein autonomer, d.h. sich selbst steuernder, Roboter simuliert. Der **[AI]-Bot** kann sich drehen und vorwärts bewegen, aber nicht seitwärts. Er ist mit Sensoren ausgestattet, die nach Vorne gerichtet in gleichem Abstand angebracht sind und in einem gewissen Winkel die Entfernung zum nächsten Gegenstand messen.
 
 ![ ](doc/robot.png)
 
